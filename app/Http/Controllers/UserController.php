@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Posts;
 use Illuminate\Http\RedirectResponse;
 use App\Contracts\Services\UserServiceInterface;
 use Illuminate\View\View;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 class UserController extends Controller
 {
     protected $userService;
+    protected $postService;
 
     public function __construct(UserServiceInterface $userService)
     {
@@ -20,30 +22,33 @@ class UserController extends Controller
 
     public function index(): View
     {
-        $users = $this->userService->getAllUser();
+        $user = auth()->user();
 
-        return view('users.index', ['users' => $users]);
+        $posts = $user->posts;
+
+        return view('posts.index', ['posts' => $posts]);
     }
 
     public function show(int $id): mixed
-    { $data = $this->userService->getUserById($id);
-        if ($data != null) {
-            return view('users.detail', ['user' => $data]);
+    {
+        $users = $this->userService->getUserById($id);
+        if ($users != null) {
+            return view('users.detail', ['user' => $users]);
         } else {
             return redirect()->route('users.index')->with('failed', 'User Does Not Exist');
         }
-
     }
+
 
     public function store(Request $request): RedirectResponse
     {
         if (Auth::check()) {
-                $request->validate([
-                    'name' => 'required|max:255',
-                    'email' => 'required|email|max:255|unique:users',
-                    'password' => 'required|confirmed|min:8|max:255',
-                    'password_confirmation' => 'required|min:8|max:255'
-                ]);
+            $request->validate([
+                'name' => 'required|max:255',
+                'email' => 'required|email|max:255|unique:users',
+                'password' => 'required|confirmed|min:8|max:255',
+                'password_confirmation' => 'required|min:8|max:255'
+            ]);
         } else {
             $request->validate([
                 'name' => 'required|max:255',
@@ -71,16 +76,16 @@ class UserController extends Controller
     public function destroy(int $id): mixed
     {
         $this->userService->delete($id);
-        return redirect()->route('users.index')->with('success', 'User deleted successfully');
+        return redirect()->route('loginScreen');
     }
-    
+
     public function update(Request $request, User $user): RedirectResponse
     {
         if (Auth::check()) {
-                $request->validate([
-                    'name' => 'required|max:255',
-                    'email' => 'required|email|max:255'
-                ]);
+            $request->validate([
+                'name' => 'required|max:255',
+                'email' => 'required|email|max:255'
+            ]);
         } else {
             $request->validate([
                 'name' => 'required|max:255',
@@ -88,6 +93,13 @@ class UserController extends Controller
             ]);
         }
         $this->userService->update($request);
-        return redirect()->route('users.index')->with('success', 'User updated successfully.');
+        return redirect()->route('users.index')->with('success', __('messages.user_updated_success'));;
+    }
+    public function showDetailForm()
+    {
+        $user = Auth::user();
+        $posts = Posts::all();
+
+        return view('users.detail', compact('user', 'posts'));
     }
 }

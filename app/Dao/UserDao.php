@@ -62,8 +62,8 @@ class UserDao implements UserDaoInterface
      * @return void
      */
     public function update(array $updateData, int $id): void
-    {    DB::transaction(function () use ($updateData, $id) {
-        User::where('id', $id)->update($updateData);
+    {   DB::transaction(function () use ($updateData, $id) {
+            User::where('id', $id)->update($updateData);
     });
     }
 
@@ -78,7 +78,6 @@ class UserDao implements UserDaoInterface
         return $users;
     }
 
-
     /**
      *Check if user is in table
      *
@@ -89,7 +88,8 @@ class UserDao implements UserDaoInterface
     {
         return User::whereId($request->id)->exists();
     }
-  /**
+
+    /**
      * Store changed password
      *
      * @param Request $request
@@ -98,8 +98,10 @@ class UserDao implements UserDaoInterface
      */
     public function storeChangedPassword(string $password, int $id): void
     {
-        $password = Hash::make($password);
-        $user = User::where('id', $id)->update('password', $password);
+        DB::transaction(function () use ($password, $id) {
+            $password = Hash::make($password);
+            User::where('id', $id)->update(['password' => $password]);
+        });
     }
    
     /**

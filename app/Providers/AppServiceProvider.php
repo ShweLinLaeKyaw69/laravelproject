@@ -26,7 +26,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind('App\Contracts\Dao\CommentDaoInterface', 'App\Dao\CommentDao');
 
         //File
-        $this->app->bind(FileServiceInterface::class, FileService::class);    }
+        $this->app->bind(FileServiceInterface::class, FileService::class);    
+    }
 
     public function boot(): void
     {

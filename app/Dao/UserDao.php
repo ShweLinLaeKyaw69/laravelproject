@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Dao;
 
 use App\Contracts\Dao\UserDaoInterface;
@@ -62,9 +63,10 @@ class UserDao implements UserDaoInterface
      * @return void
      */
     public function update(array $updateData, int $id): void
-    {   DB::transaction(function () use ($updateData, $id) {
+    {
+        DB::transaction(function () use ($updateData, $id) {
             User::where('id', $id)->update($updateData);
-    });
+        });
     }
 
     /**
@@ -103,7 +105,7 @@ class UserDao implements UserDaoInterface
             User::where('id', $id)->update(['password' => $password]);
         });
     }
-   
+
     /**
      * Store reset password
      *
@@ -125,8 +127,16 @@ class UserDao implements UserDaoInterface
             }
         );
     }
+
+    /**
+     * Retrieve posts associated with a specific user by user ID.
+     *
+     * @param int $userId The ID of the user whose posts are to be retrieved.
+     * @return Collection A collection of posts belonging to the user.
+     */
     public function getPostByUserId(int $userId): Collection
     {
+        // Find the user by their ID and retrieve their posts using the posts relationship
         return User::find($userId)->posts;
     }
 }

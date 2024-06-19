@@ -104,6 +104,5 @@ class PostDao implements PostDaoInterface
         $posts = Posts::all(); 
 
         return $posts;
-        return $user;
     }
 }

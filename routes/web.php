@@ -41,6 +41,7 @@ Route::prefix('users')->controller(UserController::class)->name('users.')->group
     Route::post('store', 'store')->name('store');
     Route::get('index', 'index')->name('index');
     Route::get('/user/detail', 'showDetailForm')->name('showdetail');
+    Route::get('/users/{userId}/detailcommentform', 'showDetailcommentform')->name('showDetailcommentform');
     Route::get('detail/{id}', 'show')->name('detail')->middleware(VerifyUserExists::class);
     Route::get('edit/{id}', 'edit')->name('edit')->middleware([VerifyUserExists::class]);
     Route::post('update', 'update')->name('update');
@@ -56,6 +57,13 @@ Route::prefix('posts')->controller(PostController::class)->name('posts.')->group
     Route::get('edit/{id}', 'edit')->name('edit')->middleware([VerifyPostExists::class]);
     Route::post('edit', 'update')->name('update');
     Route::get('delete/{id}', 'destroy')->name('delete')->middleware([VerifyPostExists::class]);
+});
+
+Route::prefix('comment')->controller(CommentController::class)->name('comment.')->group(function () {
+    Route::post('posts', 'store')->name('store');
+    Route::get('comments/delete/{id}', 'destroy')->name('delete');
+    Route::get('edit/{id}', 'edit')->name('edit');
+    Route::post('update/{id}', 'update')->name('update');
 });
 
 Route::get('logout', [AuthController::class, 'logout'])->name('logout');

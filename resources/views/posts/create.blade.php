@@ -46,5 +46,7 @@
             </div>
         </div>
 </div>
+<a href="{{route('posts.postindex', Auth::user()->id)}}" style="margin-left: 20px">Back</a>
+
 
 @endsection

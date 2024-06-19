@@ -105,4 +105,25 @@ class PostDao implements PostDaoInterface
 
         return $posts;
     }
+
+     /**
+     * Import csv file
+     *
+     * @param CsvUploadRequest $request
+     * @return boolean
+     */
+    public function csvImport(CsvUploadRequest $request): bool
+    {
+        DB::beginTransaction();
+        $import = new PostsImport();
+        $import->import($request->file('posts_csv'));
+        $failures = $import->failures();
+        if (count($failures) > 0) {
+            DB::rollBack();
+            return false;
+        } else {
+            DB::commit();
+            return true;
+        }
+    }
 }

@@ -28,21 +28,19 @@ class CommentController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'post_id' => 'required|integer', // Validate the post_id
+            'post_id' => 'required|integer', 
             'comment' => 'required|string',
         ]);
     
         $commentData = [
             'user_id' => auth()->id(),
             'comment' => $validatedData['comment'],
-            'posts_id' => $validatedData['post_id'], // Use the post_id from the form data
+            'posts_id' => $validatedData['post_id'], 
         ];
     
-        // Create the comment with the correct posts_id
-        Comment::create($commentData);
-    
+        $this->commentService->insert($request);
         // Redirect back to the post
-        return redirect()->route('posts.postindex', $validatedData['post_id'])->with('success', 'Comment added successfully!');
+        return redirect()->route('posts.postindex', $validatedData['post_id'])->with('success', __('messages.cmt_added_success'));
     }
 
      /**
@@ -56,7 +54,7 @@ class CommentController extends Controller
         $comment = $this->commentService->getCommentById($id);
 
         if (!$comment) {
-            abort(404, 'Comment not found');
+            return redirect()->back()->with('failed', __('messages.404_not_found'));
         }
     
         return view('comment.edit', ['comment' => $comment]);

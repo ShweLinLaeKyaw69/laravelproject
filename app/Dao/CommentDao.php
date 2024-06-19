@@ -4,9 +4,10 @@ namespace App\Dao;
 
 use App\Contracts\Dao\CommentDaoInterface;
 use App\Models\Comment;
-use App\Models\Posts;
 use App\Models\User;
+use App\Models\Posts;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class CommentDao implements CommentDaoInterface
 {
@@ -36,7 +37,7 @@ class CommentDao implements CommentDaoInterface
     }
 
     /**
-     * get comment by comment id
+     * Get comment by comment id
      *
      * @param integer $id
      * @return Comment
@@ -54,19 +55,23 @@ class CommentDao implements CommentDaoInterface
      */
     public function insert(array $insertData): Comment
     {
-        $post = Comment::create($insertData);
-        return $post->id;
+        return DB::transaction(function () use ($insertData) {
+            $comment = Comment::create($insertData);
+            return $comment;
+        });
     }
 
     /**
      * Delete comment
      *
      * @param integer $id
-    * @return void
+     * @return void
      */
     public function delete(int $id): void
     {
-        Comment::where('id', $id)->delete();
+        DB::transaction(function () use ($id) {
+            Comment::where('id', $id)->delete();
+        });
     }
 
     /**
@@ -78,6 +83,8 @@ class CommentDao implements CommentDaoInterface
      */
     public function update(int $id, array $updateData): int
     {
-        return Comment::where('id', $id)->update($updateData);
+        return DB::transaction(function () use ($id, $updateData) {
+            return Comment::where('id', $id)->update($updateData);
+        });
     }
 }

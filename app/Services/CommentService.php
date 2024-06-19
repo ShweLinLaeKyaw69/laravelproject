@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Auth;
 
 class CommentService implements CommentServiceInterface
 {
-
     protected $commentDao;
     public function __construct(CommentDaoInterface $commentDao)
     {
@@ -99,6 +98,6 @@ class CommentService implements CommentServiceInterface
      */
     public function getCommentById(int $id): Comment
     {
-        return Comment::with('user')->findOrFail($id);
+        return $this->commentDao->getCommentById($id);
     }
 }

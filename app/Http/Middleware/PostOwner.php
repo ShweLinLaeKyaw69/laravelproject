@@ -21,8 +21,6 @@ class PostOwner
      */
     public function handle(Request $request, Closure $next)
     {
-
-        
         $user = Auth::user();
         $post = $this->postService->getPostById($request->id);
 

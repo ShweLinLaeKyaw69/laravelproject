@@ -24,6 +24,7 @@ Route::get('/post', function () {
 
 Auth::routes();
 
+// Route::get('/login', [AuthController::class, 'index'])->name('login');
 
 Route::controller(AuthController::class)->group(function () {
     Route::get('login', 'create')->name('loginScreen');
@@ -46,5 +47,15 @@ Route::prefix('users')->controller(UserController::class)->name('users.')->group
     Route::get('delete/{id}', 'destroy')->name('delete')->middleware([VerifyUserExists::class]);
 });
 
+Route::prefix('posts')->controller(PostController::class)->name('posts.')->group(function () {
+    Route::get('index/{id}', 'index')->name('postindex');
+    Route::get('index', 'showUserDetail')->name('showUserDetail');
+    Route::get('create', 'create')->name('create')->middleware('auth');
+    Route::get('{id}', 'show')->name('show')->middleware([VerifyPostExists::class]);
+    Route::post('create', 'store')->name('store');
+    Route::get('edit/{id}', 'edit')->name('edit')->middleware([VerifyPostExists::class]);
+    Route::post('edit', 'update')->name('update');
+    Route::get('delete/{id}', 'destroy')->name('delete')->middleware([VerifyPostExists::class]);
+});
 
 Route::get('logout', [AuthController::class, 'logout'])->name('logout');

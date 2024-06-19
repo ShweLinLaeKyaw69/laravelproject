@@ -25,6 +25,7 @@ class PostDao implements PostDaoInterface
         return $post->id;
     }
 
+    
     /**
      * Get all posts
      *
@@ -32,10 +33,8 @@ class PostDao implements PostDaoInterface
      */
     public function getAllPost(): Collection
     {
-        $user = Auth::user();
         $posts = Posts::all(); 
         return $posts;
-        return view('users.detail', compact('user', 'posts'));
     }
 
      /**
@@ -46,34 +45,31 @@ class PostDao implements PostDaoInterface
     public function getPublicPost(): collection
     {
         $userIds = User::select('id')->get()->pluck('id');
-        $posts = Posts::with('comments')->whereIn('created_by', $userIds)->where('public_flag', true)->orderBy('updated_at')->get();
+        $posts = Posts::with('comments')->where('public_flag', true)->orderBy('updated_at')->get();
 
         return $posts;
     }
-
      /**
      * Get post by id
      *
      * @param integer $postId
      * @return Post
      */
-    public function getPostById(int $postId): Posts
+    public function getPostById(int $post_id): Posts
     {
-        return Posts::with(['comments', 'comments.user'])->where('id', $postId)->first();
+        return Posts::with('user')->findOrFail($post_id);
     }
-
     /**
      * Check if post exists
      *
      * @param Request $request
      * @return boolean
      */
-
     public function verifyPostExists(Request $request): bool
     {
         return Posts::findOrFail($request->id) ? true : false;
     }
-
+    
      /**
      * Update post in database
      *
@@ -97,24 +93,17 @@ class PostDao implements PostDaoInterface
         Posts::where('id', $id)->delete();
     }
 
-     /**
-     * Import csv file
+    /**
+     * Display the authenticated user's details and posts.
      *
-     * @param CsvUploadRequest $request
-     * @return boolean
+     * @return \Illuminate\View\View
      */
-    public function csvImport(CsvUploadRequest $request): bool
+    public function showUserDetail()
     {
-        DB::beginTransaction();
-        $import = new PostsImport();
-        $import->import($request->file('posts_csv'));
-        $failures = $import->failures();
-        if (count($failures) > 0) {
-            DB::rollBack();
-            return false;
-        } else {
-            DB::commit();
-            return true;
-        }
+        $user = auth()->user(); 
+        $posts = Posts::all(); 
+
+        return $posts;
+        return $user;
     }
 }

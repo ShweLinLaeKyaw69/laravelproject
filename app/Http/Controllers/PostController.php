@@ -70,8 +70,8 @@ class PostController extends Controller
      */
     public function showUserDetail(): View
     {
-        $user = auth()->user(); // Retrieve authenticated user
-        $posts = Posts::all(); // Fetch all posts (replace this with your actual query)
+        $user = auth()->user();
+        $posts = $this->postService->getAllPost();
 
         return view('users.detail', compact('user', 'posts'));
     }
@@ -133,7 +133,7 @@ class PostController extends Controller
     public function showDetailForm(): View
     {
         $user = Auth::user();
-        $posts = Posts::all(); // Assuming you have a Post model
+        $posts = $this->postService->getAllPost();
 
         return view('posts.index', compact('user', 'posts'));
     }

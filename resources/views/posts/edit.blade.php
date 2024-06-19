@@ -18,22 +18,20 @@
                         <label for="title">Title</label><br>
                         <input id="title" class="form-control" name="title" value="{{ $errors->any()?old('post'):$post->title }}">
                 </div>
-                    @if($errors->has('title'))
-            <div>
-                <p>{{ $errors->first('title') }}</p>
-                 </div>
-                     @endif
+                    @if ($errors->has('title'))
+                        <div>
+                            <p>{{ $errors->first('title') }}</p>
+                        </div>
+                    @endif
                  <div>
                     <label for="description">Description</label><br>
                     <textarea id="description" class="form-control" name="description">{{ $errors->any()?old('description'):$post->description }}</textarea>
                  </div>
                       @if($errors->has('description'))
-                 <div>
-                    <p>
-                        {{ $errors->first('description') }}
-                    </p>
-                 </div>
-                    @endif
+                        <div>
+                            <p>{{ $errors->first('description') }}</p>
+                        </div>
+                      @endif
                             <div style="margin-top: 10px"><button type="submit" class="btn btn-info">Update</button></div>
                         </form>
                     </div>

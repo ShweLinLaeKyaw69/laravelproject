@@ -25,7 +25,6 @@ class PostService implements PostServiceInterface
         $this->postDao = $postDao;
     }
 
-
     /**
      * Insert a new post.
      *
@@ -66,7 +65,7 @@ class PostService implements PostServiceInterface
      */
     public function getPostById(int $post_id): Posts
     {
-        return Posts::with('user')->findOrFail($post_id);
+        return $this->postDao->getPostById($post_id);
     }
 
     /**

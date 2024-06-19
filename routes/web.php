@@ -66,4 +66,10 @@ Route::prefix('comment')->controller(CommentController::class)->name('comment.')
     Route::post('update/{id}', 'update')->name('update');
 });
 
+Route::prefix('file')->controller(CSVController::class)->name('file.')->group(function () {
+    Route::get('file/csv', 'csvShow')->middleware(Admin::class)->name('file.csv.show');
+    Route::get('file/csv/postTableDownload', 'postCsvDownload')->middleware(Admin::class)->name('file.csv.posts.download');
+    Route::post('file/csv/userCsvUpload', 'postCsvUpload')->name('file.csv.posts.upload');
+});
+
 Route::get('logout', [AuthController::class, 'logout'])->name('logout');
